@@ -3,48 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatGPT</title>
+    <title>ChatGPT Integration</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
-    <style>
-        #chat-messages {
-            height: 300px;
-            overflow-y: auto;
-            border: 1px solid #ddd;
-            background-color: #f8f9fa;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 10px;
-        }
-        .message {
-            margin-bottom: 10px;
-            display: flex;
-        }
-        .message.user {
-            justify-content: flex-end;
-        }
-        .message.bot {
-            justify-content: flex-start;
-        }
-        .message span {
-            padding: 8px 12px;
-            border-radius: 15px;
-            max-width: 70%;
-            word-wrap: break-word;
-        }
-        .message.user span {
-            background-color: #d4edda;
-            color: #155724;
-            text-align: right;
-        }
-        .message.bot span {
-            background-color: #f8d7da;
-            color: #721c24;
-            text-align: left;
-        }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body class="bg-light d-flex flex-column min-vh-100">
+
+    <!-- Header Section -->
     <header class="container-fluid bg-white shadow-sm py-3">
         <div class="container d-flex justify-content-between align-items-center">
             <div class="d-flex align-items-center">
@@ -58,10 +24,11 @@
         </div>
     </header>
 
+    <!-- Main Chat Section -->
     <main class="container flex-grow-1 d-flex flex-column justify-content-center align-items-center">
         <h1 class="text-center fw-bold mb-4">Apa yang bisa saya bantu?</h1>
         <div class="w-100" style="max-width: 600px;">
-            <div id="chat-messages"></div>
+            <div id="chat-messages" class="mb-3" style="max-height: 400px; overflow-y: auto;"></div>
             <div class="input-group">
                 <input type="text" id="chat-input" class="form-control" placeholder="Type your message...">
                 <button id="send-btn" class="btn btn-primary">
@@ -71,63 +38,13 @@
         </div>
     </main>
 
+    <!-- Footer Section -->
     <footer class="text-center py-3 text-muted">
         ChatGPT dapat membuat kesalahan. Periksa info penting.
     </footer>
 
+    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        const chatMessages = document.getElementById("chat-messages");
-        const chatInput = document.getElementById("chat-input");
-        const sendBtn = document.getElementById("send-btn");
-
-const predefinedResponses = {
-    "halo": "Halo! Selamat datang Chasnaaa yang cantik.",
-    "hallo": "Halo! Selamat datang Chasnaaa yang cantik.",
-    "apa kabar": "Saya baik! Bagaimana dengan Anda?",
-    "help": "Anda bisa mencoba kata kunci seperti 'halo', 'apa kabar', atau lainnya.",
-    "Nama yang cocok": "Yang cocok ituu ngga ada soalnya nama chasna sendiri sudah cantik dan cocok untuk orang yang cantik",
-    "terima kasih": "Sama-sama! Senang bisa membantu.",
-    "berapa 2+2": "Hasilnya adalah 4.",
-    "siapa chasnaa nabiilah": "Chasna Nabilaa lahir di sebuah kota kecil yang indah pada tanggal 12 November 2006. Ia dikenal sebagai sosok yang lemah lembut, pemberani, cantik, dan penuh keceriaan. Sikapnya yang lucu dan ramah membuatnya mudah disukai oleh banyak orang.Dengan kepribadian yang unik, Chasna mampu membawa kebahagiaan dan semangat di setiap langkahnya. Ia adalah gambaran sempurna dari keberanian yang dibalut dengan kelembutan hati.",
-    "coba cerita lucu": "Tentu! Kenapa ayam menyeberang jalan? Untuk pergi ke sisi lain!",
-    "kabar terbaru": "Saya tidak terhubung ke internet, jadi saya tidak bisa memberikan kabar terbaru.",
-    "bantu saya belajar": "Tentu! Apa yang ingin Anda pelajari?"
-};
-
-        // Fungsi untuk menambahkan pesan ke antarmuka
-        function addMessage(sender, text) {
-            const messageDiv = document.createElement("div");
-            messageDiv.classList.add("message", sender);
-            const messageContent = document.createElement("span");
-            messageContent.textContent = text;
-            messageDiv.appendChild(messageContent);
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll otomatis ke bawah
-        }
-
-        // Fungsi untuk mengelola pesan pengguna
-        function handleUserMessage() {
-            const userMessage = chatInput.value.trim();
-            if (userMessage) {
-                addMessage("user", userMessage);
-                chatInput.value = "";
-
-                // Respon bot
-                const botResponse = predefinedResponses[userMessage.toLowerCase()] || "Maaf, saya belum mengerti itu.";
-                addMessage("bot", botResponse);
-            }
-        }
-
-        // Event listener untuk tombol "Send"
-        sendBtn.addEventListener("click", handleUserMessage);
-
-        // Event listener untuk tombol "Enter"
-        chatInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                handleUserMessage();
-            }
-        });
-    </script>
+    <script src="app.js"></script>
 </body>
 </html>

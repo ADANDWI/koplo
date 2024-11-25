@@ -1,44 +1,44 @@
-const chatMessages = document.getElementById("chat-messages");
-const chatInput = document.getElementById("chat-input");
-const sendBtn = document.getElementById("send-btn");
+const express = require('express');
+const app = express();
+const fetch = require('node-fetch');  // Gunakan node-fetch atau axios untuk memanggil API OpenAI
+const port = 5500;
 
-// Daftar respons otomatis untuk kata kunci tertentu
-const predefinedResponses = {
-    "halo": "Halo! Selamat datang di ChatGPT versi lokal.",
-    "apa kabar": "Saya baik! Bagaimana dengan Anda?",
-    "help": "Anda bisa mencoba kata kunci seperti 'halo', 'apa kabar', atau lainnya."
-};
+// Middleware untuk parsing JSON
+app.use(express.json());
 
-// Fungsi untuk menambahkan pesan ke antarmuka
-function addMessage(sender, text) {
-    const messageDiv = document.createElement("div");
-    messageDiv.classList.add("message", sender);
-    const messageContent = document.createElement("span");
-    messageContent.textContent = text;
-    messageDiv.appendChild(messageContent);
-    chatMessages.appendChild(messageDiv);
-    chatMessages.scrollTop = chatMessages.scrollHeight; // Scroll otomatis ke bawah
+// Endpoint untuk menerima pesan dan mengirimkan respons dari OpenAI
+app.post('/send-message', async (req, res) => {
+    const userMessage = req.body.message;
+
+    // Panggil OpenAI API
+    const openAIResponse = await sendToOpenAI(userMessage);
+
+    // Kirim respons ke frontend
+    res.json({ response: openAIResponse });
+});
+
+// Fungsi untuk mengirim pesan ke OpenAI API
+async function sendToOpenAI(message) {
+    const API_KEY = process.env.OPENAI_API_KEY;  // Pastikan Anda sudah mengonfigurasi API Key di .env
+    const url = 'https://api.openai.com/v1/chat/completions';
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`,
+        },
+        body: JSON.stringify({
+            model: 'gpt-3.5-turbo',
+            messages: [{ role: 'user', content: message }],
+        }),
+    });
+
+    const data = await response.json();
+    return data.choices[0].message.content;  // Ambil pesan respons dari OpenAI
 }
 
-// Fungsi untuk mengelola pesan pengguna
-function handleUserMessage() {
-    const userMessage = chatInput.value.trim();
-    if (userMessage) {
-        addMessage("user", userMessage);
-        chatInput.value = "";
-
-        // Respon bot
-        const botResponse = predefinedResponses[userMessage.toLowerCase()] || "Maaf, saya belum mengerti itu.";
-        addMessage("bot", botResponse);
-    }
-}
-
-// Event listener untuk tombol "Send"
-sendBtn.addEventListener("click", handleUserMessage);
-
-// Event listener untuk tombol "Enter"
-chatInput.addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-        handleUserMessage();
-    }
+// Menjalankan server pada port yang telah ditentukan
+app.listen(port, () => {
+    console.log(`Server berjalan pada http://localhost:${port}`);
 });
