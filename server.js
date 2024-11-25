@@ -1,42 +1,44 @@
 const express = require('express');
-const fetch = require('node-fetch');
-require('dotenv').config();
-
 const app = express();
-const PORT = process.env.PORT || 3000;
+const fetch = require('node-fetch');  // Gunakan node-fetch atau axios untuk memanggil API OpenAI
+const port = 5500;
 
+// Middleware untuk parsing JSON
 app.use(express.json());
 
-// Route untuk menangani permintaan dari frontend
+// Endpoint untuk menerima pesan dan mengirimkan respons dari OpenAI
 app.post('/send-message', async (req, res) => {
-    const message = req.body.message;
-    const API_KEY = process.env.OPENAI_API_KEY; // Ambil API Key dari .env
+    const userMessage = req.body.message;
 
-    const url = "https://api.openai.com/v1/chat/completions";
-    const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${API_KEY}`,
-    };
+    // Panggil OpenAI API
+    const openAIResponse = await sendToOpenAI(userMessage);
 
-    const body = JSON.stringify({
-        model: "gpt-3.5-turbo",
-        messages: [{ role: "user", content: message }],
-    });
-
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: headers,
-            body: body,
-        });
-        const data = await response.json();
-        res.json({ response: data.choices[0].message.content }); // Kirim balik response dari OpenAI
-    } catch (error) {
-        console.error("Error:", error);
-        res.status(500).send("Oops, something went wrong!");
-    }
+    // Kirim respons ke frontend
+    res.json({ response: openAIResponse });
 });
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
+// Fungsi untuk mengirim pesan ke OpenAI API
+async function sendToOpenAI(message) {
+    const API_KEY = process.env.OPENAI_API_KEY;  // Pastikan Anda sudah mengonfigurasi API Key di .env
+    const url = 'https://api.openai.com/v1/chat/completions';
+
+    const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${API_KEY}`,
+        },
+        body: JSON.stringify({
+            model: 'gpt-3.5-turbo',
+            messages: [{ role: 'user', content: message }],
+        }),
+    });
+
+    const data = await response.json();
+    return data.choices[0].message.content;  // Ambil pesan respons dari OpenAI
+}
+
+// Menjalankan server pada port yang telah ditentukan
+app.listen(port, () => {
+    console.log(`Server berjalan pada http://localhost:${port}`);
 });
