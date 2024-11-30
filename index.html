@@ -53,7 +53,7 @@
                 <span class="fw-semibold text-secondary">ChatGPT</span>
             </div>
             <div>
-                <img src="https://storage.googleapis.com/a1aa/image/XgkBDdHGjYofAKve5azOzNe6oHltbhFm00GgvDmE7TgxlEpnA.jpg" alt="User avatar" class="rounded-circle" width="40" height="40">
+                <img src="Cuplikan layar 2024-12-01 005616.png" alt="User avatar" class="rounded-circle" width="40" height="40">
             </div>
         </div>
     </header>
@@ -95,7 +95,7 @@ const predefinedResponses = {
     "bantu saya belajar": "Tentu! Apa yang ingin Anda pelajari?"
 };
 
-        // Fungsi untuk menambahkan pesan ke antarmuka
+      
         function addMessage(sender, text) {
             const messageDiv = document.createElement("div");
             messageDiv.classList.add("message", sender);
@@ -119,10 +119,10 @@ const predefinedResponses = {
             }
         }
 
-        // Event listener untuk tombol "Send"
+        
         sendBtn.addEventListener("click", handleUserMessage);
 
-        // Event listener untuk tombol "Enter"
+        
         chatInput.addEventListener("keypress", (e) => {
             if (e.key === "Enter") {
                 handleUserMessage();
