@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChatGPT</title>
+    <title>ChatGPT & Sendbird Chatbot</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet"/>
     <style>
@@ -50,7 +50,7 @@
             <div class="d-flex align-items-center">
                 <i class="fas fa-clipboard-list text-primary me-2"></i>
                 <i class="fas fa-pen text-secondary me-2"></i>
-                <span class="fw-semibold text-secondary">ChatGPT</span>
+                <span class="fw-semibold text-secondary">ChatGPT & Sendbird</span>
             </div>
             <div>
                 <img src="Cuplikan layar 2024-12-01 005616.png" alt="User avatar" class="rounded-circle" width="40" height="40">
@@ -68,6 +68,8 @@
                     <i class="fas fa-paper-plane"></i>
                 </button>
             </div>
+            <!-- Div untuk chatbot Sendbird -->
+            <div id="aichatbot"></div>
         </div>
     </main>
 
@@ -75,59 +77,65 @@
         ChatGPT dapat membuat kesalahan. Periksa info penting.
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Chatbot Script Sendbird -->
     <script>
-        const chatMessages = document.getElementById("chat-messages");
-        const chatInput = document.getElementById("chat-input");
-        const sendBtn = document.getElementById("send-btn");
+    // Predefined responses for the local chatbot
+    const predefinedResponses = {
+        "halo": "Halo! Selamat datang Chasnaaa yang cantik.",
+        "hallo": "Halo! Selamat datang Chasnaaa yang cantik.",
+        "apa kabar": "Saya baik! Bagaimana dengan Anda?",
+        "help": "Anda bisa mencoba kata kunci seperti 'halo', 'apa kabar', atau lainnya.",
+        "Nama yang cocok": "Yang cocok itu nggak ada soalnya nama Chasna sendiri sudah cantik dan cocok untuk orang yang cantik.",
+        "terima kasih": "Sama-sama! Senang bisa membantu.",
+        "coba cerita lucu": "Kenapa ayam menyeberang jalan? Untuk pergi ke sisi lain!"
+    };
 
-const predefinedResponses = {
-    "halo": "Halo! Selamat datang Chasnaaa yang cantik.",
-    "hallo": "Halo! Selamat datang Chasnaaa yang cantik.",
-    "apa kabar": "Saya baik! Bagaimana dengan Anda?",
-    "help": "Anda bisa mencoba kata kunci seperti 'halo', 'apa kabar', atau lainnya.",
-    "Nama yang cocok": "Yang cocok ituu ngga ada soalnya nama chasna sendiri sudah cantik dan cocok untuk orang yang cantik",
-    "terima kasih": "Sama-sama! Senang bisa membantu.",
-    "chasna": "Hasilnya adalah 4.",
-    "siapa chasnaa nabiilah": "Chasna Nabilaa lahir di sebuah kota kecil yang indah lahir pada tanggal 12 November 2006. Ia dikenal sebagai sosok yang lemah lembut, pemberani, cantik, dan penuh keceriaan. Sikapnya yang lucu dan ramah membuatnya mudah disukai oleh banyak orang.Dengan kepribadian yang unik, Chasna mampu membawa kebahagiaan dan semangat di setiap langkahnya. Ia adalah gambaran sempurna dari keberanian yang dibalut dengan kelembutan hati. chasna sendiri seseorang yang cantik selalu menghibur suka menebarkan kegembiraan membawa suasana yang happy cewek yang independent orang yang selalu berusaha dan ambisius dalam melakukan sesautu hal,orang yang selalu membuat orang yang mengetik ini bingung kenapa ada cewek seperti chasna gambaran cewek yang suksess.",
-    "coba cerita lucu": "Tentu! Kenapa ayam menyeberang jalan? Untuk pergi ke sisi lain!",
-    "kabar terbaru": "Saya tidak terhubung ke internet, jadi saya tidak bisa memberikan kabar terbaru.",
-    "bantu saya belajar": "Tentu! Apa yang ingin Anda pelajari?"
-};
+    const chatMessages = document.getElementById("chat-messages");
+    const chatInput = document.getElementById("chat-input");
+    const sendBtn = document.getElementById("send-btn");
 
-      
-        function addMessage(sender, text) {
-            const messageDiv = document.createElement("div");
-            messageDiv.classList.add("message", sender);
-            const messageContent = document.createElement("span");
-            messageContent.textContent = text;
-            messageDiv.appendChild(messageContent);
-            chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight; 
-        }
+    function addMessage(sender, text) {
+        const messageDiv = document.createElement("div");
+        messageDiv.classList.add("message", sender);
+        const messageContent = document.createElement("span");
+        messageContent.textContent = text;
+        messageDiv.appendChild(messageContent);
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
-        // Fungsi untuk mengelola pesan pengguna
-        function handleUserMessage() {
-            const userMessage = chatInput.value.trim();
-            if (userMessage) {
-                addMessage("user", userMessage);
-                chatInput.value = "";
+    // Function to handle user input
+    function handleUserMessage() {
+        const userMessage = chatInput.value.trim();
+        if (userMessage) {
+            addMessage("user", userMessage);
+            chatInput.value = "";
 
-                // Respon bot
-                const botResponse = predefinedResponses[userMessage.toLowerCase()] || "Maaf, saya belum mengerti itu.";
+            // Check for predefined response
+            const botResponse = predefinedResponses[userMessage.toLowerCase()] || null;
+            if (botResponse) {
                 addMessage("bot", botResponse);
+            } else {
+                // If no predefined response, pass to Sendbird chatbot
+                sendToSendbird(userMessage);
             }
         }
+    }
 
-        
-        sendBtn.addEventListener("click", handleUserMessage);
+    function sendToSendbird(message) {
+        // Initialize Sendbird chatbot when needed
+        window.chatbotConfig = ['FE4F6693-F544-4AA6-8707-F42D63FAE669', '83kB-q2KJhSE8fc2l6iJC', { apiHost: 'https://api-cf-ap-5.sendbird.com' }];
+        const sendbirdMessage = "Pesan diteruskan ke chatbot Sendbird: " + message;
+        addMessage("bot", sendbirdMessage);
+    }
 
-        
-        chatInput.addEventListener("keypress", (e) => {
-            if (e.key === "Enter") {
-                handleUserMessage();
-            }
-        });
+    sendBtn.addEventListener("click", handleUserMessage);
+    chatInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+            handleUserMessage();
+        }
+    });
+
     </script>
 </body>
 </html>
