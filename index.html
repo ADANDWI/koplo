@@ -94,6 +94,8 @@
     const chatInput = document.getElementById("chat-input");
     const sendBtn = document.getElementById("send-btn");
 
+    let chatbotInitialized = false;
+
     function addMessage(sender, text) {
         const messageDiv = document.createElement("div");
         messageDiv.classList.add("message", sender);
@@ -123,26 +125,33 @@
     }
 
     function sendToSendbird(message) {
-        // Initialize Sendbird chatbot when needed
-        window.chatbotConfig = ['FE4F6693-F544-4AA6-8707-F42D63FAE669', '83kB-q2KJhSE8fc2l6iJC', { apiHost: 'https://api-cf-ap-5.sendbird.com' }];
-        const sendbirdMessage = ": " + message;
-        addMessage("bot", sendbirdMessage);
+        if (!chatbotInitialized) {
+            // Initialize Sendbird chatbot when needed
+            window.chatbotConfig = ['FE4F6693-F544-4AA6-8707-F42D63FAE669', '83kB-q2KJhSE8fc2l6iJC', { apiHost: 'https://api-cf-ap-5.sendbird.com' }];
+            const sendbirdMessage = "p: " + message;
+            addMessage("bot", sendbirdMessage);
 
-        // Initialize the Sendbird chatbot
-        (function(w, d, s, ...args) {
-            var div = d.createElement('div');
-            div.id = 'aichatbot';
-            d.body.appendChild(div);
-            w.chatbotConfig = args;
-            var f = d.getElementsByTagName(s)[0],
-                j = d.createElement(s);
-            j.defer = true;
-            j.type = 'module';
-            j.src = 'https://aichatbot.sendbird.com/index.js';
-            f.parentNode.insertBefore(j, f);
-        })(window, document, 'script', 'FE4F6693-F544-4AA6-8707-F42D63FAE669', '83kB-q2KJhSE8fc2l6iJC', {
-            apiHost: 'https://api-cf-ap-5.sendbird.com',
-        });
+            // Initialize the Sendbird chatbot script
+            (function(w, d, s, ...args) {
+                var div = d.createElement('div');
+                div.id = 'aichatbot';
+                d.body.appendChild(div);
+                w.chatbotConfig = args;
+                var f = d.getElementsByTagName(s)[0],
+                    j = d.createElement(s);
+                j.defer = true;
+                j.type = 'module';
+                j.src = 'https://aichatbot.sendbird.com/index.js';
+                f.parentNode.insertBefore(j, f);
+            })(window, document, 'script', 'FE4F6693-F544-4AA6-8707-F42D63FAE669', '83kB-q2KJhSE8fc2l6iJC', {
+                apiHost: 'https://api-cf-ap-5.sendbird.com',
+            });
+
+            chatbotInitialized = true;  // Mark as initialized
+        } else {
+            // If already initialized, just pass the message to Sendbird
+            addMessage("bot", "p: " + message);
+        }
     }
 
     sendBtn.addEventListener("click", handleUserMessage);
@@ -151,7 +160,6 @@
             handleUserMessage();
         }
     });
-
     </script>
 </body>
 </html>
