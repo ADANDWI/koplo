@@ -125,7 +125,7 @@
     function sendToSendbird(message) {
         // Initialize Sendbird chatbot when needed
         window.chatbotConfig = ['FE4F6693-F544-4AA6-8707-F42D63FAE669', '83kB-q2KJhSE8fc2l6iJC', { apiHost: 'https://api-cf-ap-5.sendbird.com' }];
-        const sendbirdMessage = "Pesan diteruskan ke chatbot Sendbird: " + message;
+        const sendbirdMessage = ": " + message;
         addMessage("bot", sendbirdMessage);
 
         // Initialize the Sendbird chatbot
